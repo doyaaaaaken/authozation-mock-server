@@ -47,7 +47,7 @@ const createResponseData = (res, scope, responseType, clientId, redirectUrl, sta
 };
 
 router
-    .get('/authorize', function(req, res, next) {
+    .get('/authorize', (req, res, next) => {
         const scope = req.query["scope"]; //ex.) "openid%20profile"
         const responseType = req.query["response_type"]; //ex.) "code"
         const clientId = req.query["client_id"]; //ex.) "s6BhdRkqt3"
@@ -56,7 +56,7 @@ router
 
         createResponseData(res, scope, responseType, clientId, redirectUrl, state);
     })
-    .post('/authorize', function(req, res, next) {
+    .post('/authorize', (req, res, next) => {
         const scope = req.body.scope;
         const responseType = req.body.response_type;
         const clientId = req.body.client_id;
@@ -64,6 +64,15 @@ router
         const state = req.body.state;
 
         createResponseData(res, scope, responseType, clientId, redirectUrl, state);
+    })
+    .post('/token', (req, res, next) => {
+        //TODO: implement (http://openid-foundation-japan.github.io/openid-connect-core-1_0.ja.html#TokenEndpoint)
+        const grantType = req.body.grant_type;
+        if(grantType !== 'authorization_code') {
+            res.status(400).send("grant_type parameter must be 'authorization_code'.");
+        } else {
+            res.send('');
+        }
     });
 
 module.exports = router;

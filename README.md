@@ -9,3 +9,7 @@ This is mock server application with endpoints of OpenId Connect.
 | run application | `npm start` |
 | run application with debugging | `npm run debug` |
 | test application | `npm test` |
+
+# Endpoints
+
+//TODO: Introduce API Documentation.
