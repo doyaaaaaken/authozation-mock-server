@@ -8,6 +8,8 @@ const sassMiddleware = require('node-sass-middleware');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
+const codeFlows = require('./routes/code-flow');
+const implicitFlows = require('./routes/implicit-flow');
 
 const app = express();
 
@@ -31,6 +33,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/code-flow', codeFlows); //OpenID Connect 'Authentication Code Flow' endpoints
+app.use('/implicit-flow', implicitFlows); //OpenID Connect 'Implicit Flow' endpoints
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
