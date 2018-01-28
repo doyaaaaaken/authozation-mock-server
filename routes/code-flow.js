@@ -38,6 +38,14 @@ const parseScopeList = (scope) => scope.split(' ').filter((value) => {
     }
 });
 
+const createResponseData = (res, scope, responseType, clientId, redirectUrl, state) => {
+    const scopeList = parseScopeList(scope);
+    const responseParams = validate(scopeList, responseType, clientId, redirectUrl, state);
+    console.log(responseParams.msg);
+    //TODO: change response to officially format. (http://openid-foundation-japan.github.io/openid-connect-core-1_0.ja.html#AuthResponse)
+    res.status(responseParams.status).send(responseParams.msg);
+};
+
 router
     .get('/authorize', function(req, res, next) {
         const scope = req.query["scope"]; //ex.) "openid%20profile"
@@ -46,14 +54,16 @@ router
         const redirectUrl = req.query["redirect_url"]; //ex.) "https%3A%2F%2Fclient.example.org%2Fcb"
         const state = req.query["state"]; //ex.) "af0ifjsldkj"
 
-        const scopeList = parseScopeList(scope);
-        const responseParams = validate(scopeList, responseType, clientId, redirectUrl, state);
-        console.log(responseParams.msg);
-        //TODO: change response to officially format. (http://openid-foundation-japan.github.io/openid-connect-core-1_0.ja.html#AuthResponse)
-        res.status(responseParams.status).send(responseParams.msg);
+        createResponseData(res, scope, responseType, clientId, redirectUrl, state);
     })
     .post('/authorize', function(req, res, next) {
-        //TODO: implement
+        const scope = req.body.scope;
+        const responseType = req.body.response_type;
+        const clientId = req.body.client_id;
+        const redirectUrl = req.body.redirect_url;
+        const state = req.body.state;
+
+        createResponseData(res, scope, responseType, clientId, redirectUrl, state);
     });
 
 module.exports = router;
