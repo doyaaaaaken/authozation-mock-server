@@ -1,6 +1,6 @@
 # open-id-connect-mock-server
 
-This is mock server application with endpoints of OpenId Connect.
+This is mock server application with endpoints of [OpenID Connect 1.0](http://openid.net/connect/).
 
 # Usage
 
@@ -12,4 +12,8 @@ This is mock server application with endpoints of OpenId Connect.
 
 # Endpoints
 
-//TODO: Introduce API Documentation.
+See API Documentation. Document exists below folder.
+
+API Blueprint Format: `./doc/api.md`
+HTML Format: `./doc/output/api.html`
+

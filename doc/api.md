@@ -1,0 +1,56 @@
+FORMAT: 1A
+
+# Open Id Connect 1.0 Mock Server. 
+This mock server is according to the specification of [OpenID Connect 1.0](http://openid.net/connect/).
+
+# Authorize [/authorize{?scope}{?response_type}{?client_id}{?redirect_uri}${?state}]
+
+## Authentication Request [GET]
+
+Authenticatino Start Request Endpoint.
+Defined as [OpenID Connect 1.0 Authentication Request](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
+
++ Parameters
+
+    + scope (string) - This value MUST be `openid`.
+    
+    + response_type (string) - If client want to call api with `Authentication Code Flow`, this value MUST be `code`.
+    If `Implicit Flow`, this value MUST be `id_token token` or `id_token`.
+    
+    + client_id (string) - OAuth 2.0 Client Identifier.
+    
+    + redirect_uri (string) - Redirection URI to which the response will be sent.
+    
+    + state (string, optional) - Opaque value used to maintain state between the request and the callback. Typically, Cross-Site Request Forgery (CSRF, XSRF) mitigation is done by cryptographically binding the value of this parameter with a browser cookie.
+
++ Response 302
+
+    + Headers
+
+            `Location: https://server.example.com/authorize?response_type=code&scope=openid%20profile%20email&client_id=s6BhdRkqt3&state=af0ifjsldkj&redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb`
+
+## Authentication Request [POST]
+
+Authenticatino Start Request Endpoint.
+Defined as [OpenID Connect 1.0 Authentication Request](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
+
++ Request (application/x-www-form-urlencoded)
+
+    + Attributes
+    
+        + scope (string) - This value MUST be `openid`.
+        
+        + response_type (string) - If client want to call api with `Authentication Code Flow`, this value MUST be `code`.
+        If `Implicit Flow`, this value MUST be `id_token token` or `id_token`.
+        
+        + client_id (string) - OAuth 2.0 Client Identifier.
+        
+        + redirect_uri (string) - Redirection URI to which the response will be sent.
+        
+        + state (string, optional) - Opaque value used to maintain state between the request and the callback. Typically, Cross-Site Request Forgery (CSRF, XSRF) mitigation is done by cryptographically binding the value of this parameter with a browser cookie.
+
++ Response 302
+
+    + Headers
+
+            `Location: https://server.example.com/authorize?response_type=code&scope=openid%20profile%20email&client_id=s6BhdRkqt3&state=af0ifjsldkj&redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb`
