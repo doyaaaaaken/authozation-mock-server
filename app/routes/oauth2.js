@@ -16,29 +16,41 @@ const parseUri = (uri) => {
     }
 };
 const EXPIRES_IN = 3600;
+const CLIENT_CALLBACK_URI = 'http://localhost:3000/client-app/oauth2/callback';
 
 router
     .get('/authorize', (req, res, next) => {
         const responseType = req.query["response_type"];
         const clientId = req.query["client_id"];
-        const redirectUri = parseUri(req.query["redirect_uri"]);
+        const parsedRedirectUri = parseUri(req.query["redirect_uri"]);
+        const redirectUri = (parsedRedirectUri) ? parsedRedirectUri : CLIENT_CALLBACK_URI;
         const scopeList = parseScopeList(req.query["scope"]);
         const state = req.query["state"];
 
-        if (responseType === 'code') { //Authorization Code Flow [https://tools.ietf.org/html/rfc6749#section-4.1]
+        if(!redirectUri) {
+            res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'parameter redirect_uri invalid.', state));
+
+        } else if (responseType === 'code') { //Authorization Code Flow [https://tools.ietf.org/html/rfc6749#section-4.1]
             if (!clientId) {
                 res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'parameter client_id required.', state));
             } else {
-                const redirectTargetUri = (redirectUri) ? redirectUri : 'http://localhost:3000/client-app/callback';
                 const grantCode = uuid4();
                 const stateQuery = (state) ? `&state=${state}` : '';
-                res.status(302).header('Location', `${redirectTargetUri}?code=${grantCode}${stateQuery}`).send();
+                res.status(302).header('Location', `${redirectUri}?code=${grantCode}${stateQuery}`).send();
             }
         } else if (responseType === 'token') { //Implicit Flow [https://tools.ietf.org/html/rfc6749#section-4.2]
-            //TODO: implement
+            if (!clientId) {
+                res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'parameter client_id required.', state));
+            } else {
+                const accessToken = uuid4();
+                const tokenTypeQuery = '&token_type=bearer';
+                const stateQuery = (state) ? `&state=${state}` : '';
+                const expiresInQuery = '&expires_in=3600';
+                res.status(302).header('Location', `${redirectUri}#access_token=${accessToken}${tokenTypeQuery}${stateQuery}${expiresInQuery}`).send();
+            }
 
         } else {
-            res.status(400).json(new AuthorizationApiErrorResopnse('unsupported_response_type', 'parameter response_type invalid.', state));
+            res.status(302).header('Location', new AuthorizationApiErrorResopnse('unsupported_response_type', 'parameter response_type invalid.', state).toUri(redirectUri)).send();
         }
     })
     .post('/token', (req, res, next) => {
