@@ -8,6 +8,7 @@ const sassMiddleware = require('node-sass-middleware');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
+const oauth2Routes = require('./routes/oauth2');
 const codeFlows = require('./routes/code-flow');
 const implicitFlows = require('./routes/implicit-flow');
 
@@ -33,6 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/oauth2', oauth2Routes);
 app.use('/code-flow', codeFlows); //OpenID Connect 'Authentication Code Flow' endpoints
 app.use('/implicit-flow', implicitFlows); //OpenID Connect 'Implicit Flow' endpoints
 
