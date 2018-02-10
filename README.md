@@ -20,7 +20,6 @@ See details on `Endpoints` section.
 
 See API Documentation. Document exists below folder.
 
-API Blueprint Format: `./doc/api.md`
-
-HTML Format: `./doc/output/api.html`
+* API Blueprint Format: `./doc/api.md`
+* HTML Format: `./doc/output/api.html`
 
