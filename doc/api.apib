@@ -1,11 +1,68 @@
 FORMAT: 1A
 
-# Open Id Connect 1.0 Mock Server. 
-This mock server is according to the specification of [OpenID Connect 1.0](http://openid.net/connect/).
+# OAuth2.0 and Open Id Connect 1.0 Mock Server.
 
-# Authorize [/code-flow/authorize{?scope}{&response_type}{&client_id}{&redirect_uri}{&state}]
+This mock server is implemented according to the specification of [OAuth2.0](https://tools.ietf.org/html/rfc6749) and [OpenID Connect 1.0](http://openid.net/connect/).
 
-## Authentication Request [GET]
+
+
+
+# Group OAuth2.0 endpoints
+
+## Authorization Endpoint [/oauth2/authorize{?response_type}]
+
+This endpoint is described at [RFC6749 section-3.1](https://tools.ietf.org/html/rfc6749#section-3.1).
+This endpoint is used to interact with the resource owner and obtain an authorization grant.
+Authorization server verify the identity of resource owner from request information.
+
+### Authentication Request [GET]
+
++ Parameters
+
+    + response_type: code (string) - If client want to call api with `Authorization Code Flow`, this value MUST be `code`.
+    If `Implicit Flow`, this value MUST be `token`.
+
++ Response 302
+
+
+
+## Token Endpoint [/oauth2/token]
+
+This endpoint is described at [RFC6749 section-3.2](https://tools.ietf.org/html/rfc6749#section-3.2).
+The token endpoint is used by the client to obtain an access token by presenting its authorization grant or refresh token.
+This endpoint is called, except on `Implicit Flow`.
+
+### Token Request [POST]
+
++ Request (application/x-www-form-urlencoded)
+
+    + grant_type: client_credentials (string) - If authorization grant type is `Client Credentials Grant`, the value MUST be `client_credentials`.
+    + scope: profile (string, optional) - Access token scope parameter which allows clients to access resource.
+
++ Response 200 (application/json)
+
+    + Body
+
+        {
+            "access_token":"2YotnFZFEjr1zCsicMWpAA",
+            "token_type":"example",
+            "expires_in":3600,
+            "example_parameter":"example_value"
+        }
+
+
+
+
+
+
+
+
+
+# Group OpenID Connect 1.0 Endpoints
+
+## Authorize [/code-flow/authorize{?scope}{&response_type}{&client_id}{&redirect_uri}{&state}]
+
+### Authentication Request [GET]
 
 Authenticatino Start Request Endpoint.
 Defined as [OpenID Connect 1.0 Authentication Request](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
@@ -26,7 +83,7 @@ Defined as [OpenID Connect 1.0 Authentication Request](http://openid.net/specs/o
 + Response 302
 
 
-## Authentication Request [POST]
+### Authentication Request [POST]
 
 Authenticatino Start Request Endpoint.
 Defined as [OpenID Connect 1.0 Authentication Request](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
