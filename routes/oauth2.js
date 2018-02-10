@@ -45,6 +45,17 @@ router
         const scopeList = parseScopeList(req.body.scope);
 
         if (grantType === 'authorization_code') { //Authorization Code Flow [https://tools.ietf.org/html/rfc6749#section-4.1]
+            const grantCode = req.body.code;
+            const redirectUri = req.body.redirect_uri;
+            const clientId = req.body.client_id;
+
+            //TODO: verify grantCode (Validate unchanging between issued grant code and received grant code).
+            if(!grantCode) {
+                res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter code required.'));
+            } else {
+                const responseBody = TokenApiSuccessResponse.buildForResourceOwnerPasswordCredentialsFlow(uuid4(), 'bearer', EXPIRES_IN, uuid4());
+                res.json(responseBody);
+            }
 
         } else if (grantType === 'password') { //Resource Owner Password Credentials Flow [https://tools.ietf.org/html/rfc6749#section-4.3]
             const username = req.body.username;
