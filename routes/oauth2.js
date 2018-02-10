@@ -1,8 +1,25 @@
 const router = require('express').Router();
+const url = require('url');
 const uuid4 = require('uuid/v4');
 
 const parseScopeList = (scope) => (scope ? scope : "").split(' ');
+const parseUri = (uri) => {
+    try {
+        const u = url.parse(uri);
+        return u.href;
+    } catch (e) {
+        return null;
+    }
+};
 const EXPIRES_IN = 3600;
+
+class AuthorizationApiErrorResopnse {
+    constructor(error, error_description, state) {
+        this.error = error;
+        this.error_description = error_description;
+        this.state = state;
+    }
+}
 
 class TokenApiSuccessResponse {
     constructor(access_token, token_type, expires_in, refresh_token) {
@@ -28,17 +45,29 @@ class TokenApiErrorResopnse {
     }
 }
 
-//TODO: implement flow 1.
 router
     .get('/authorize', (req, res, next) => {
-        //TODO: implement all flows
-        const scope = req.query["scope"]; //ex.) "openid%20profile"
-        const responseType = req.query["response_type"]; //ex.) "code"
-        const clientId = req.query["client_id"]; //ex.) "s6BhdRkqt3"
-        const redirectUri = req.query["redirect_uri"]; //ex.) "https%3A%2F%2Fclient.example.org%2Fcb"
-        const state = req.query["state"]; //ex.) "af0ifjsldkj"
+        const responseType = req.query["response_type"];
+        const clientId = req.query["client_id"];
+        const redirectUri = parseUri(req.query["redirect_uri"]);
+        const scopeList = parseScopeList(req.query["scope"]);
+        const state = req.query["state"];
 
-        // createResponseData(res, scope, responseType, clientId, redirectUri, state);
+        if (responseType === 'code') { //Authorization Code Flow [https://tools.ietf.org/html/rfc6749#section-4.1]
+            if (!clientId) {
+                res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'parameter client_id required.', state));
+            } else {
+                const redirectTargetUri = (redirectUri) ? redirectUri : 'http://localhost:3000/client-app/callback';
+                const grantCode = uuid4();
+                const stateQuery = (state) ? `&state=${state}` : '';
+                res.status(302).header('Location', `${redirectTargetUri}?code=${grantCode}${stateQuery}`).send();
+            }
+        } else if (responseType === 'token') { //Implicit Flow [https://tools.ietf.org/html/rfc6749#section-4.2]
+            //TODO: implement
+
+        } else {
+            res.status(400).json(new AuthorizationApiErrorResopnse('unsupported_response_type', 'parameter response_type invalid.', state));
+        }
     })
     .post('/token', (req, res, next) => {
         const grantType = req.body.grant_type;
@@ -50,7 +79,7 @@ router
             const clientId = req.body.client_id;
 
             //TODO: verify grantCode (Validate unchanging between issued grant code and received grant code).
-            if(!grantCode) {
+            if (!grantCode) {
                 res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter code required.'));
             } else {
                 const responseBody = TokenApiSuccessResponse.buildForResourceOwnerPasswordCredentialsFlow(uuid4(), 'bearer', EXPIRES_IN, uuid4());
@@ -61,7 +90,7 @@ router
             const username = req.body.username;
             const password = req.body.password;
 
-            if(!username) {
+            if (!username) {
                 res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter username required.'));
             } else if (!password) {
                 res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter password required.'));
@@ -80,6 +109,5 @@ router
             res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter grant_type invalid.'));
         }
     });
-
 
 module.exports = router;
