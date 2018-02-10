@@ -2,6 +2,10 @@ const router = require('express').Router();
 const url = require('url');
 const uuid4 = require('uuid/v4');
 
+const AuthorizationApiErrorResopnse = require('../models/oauth2/AuthorizationApiErrorResopnse');
+const TokenApiSuccessResponse = require('../models/oauth2/TokenApiSuccessResponse');
+const TokenApiErrorResopnse = require('../models/oauth2/TokenApiErrorResopnse');
+
 const parseScopeList = (scope) => (scope ? scope : "").split(' ');
 const parseUri = (uri) => {
     try {
@@ -12,38 +16,6 @@ const parseUri = (uri) => {
     }
 };
 const EXPIRES_IN = 3600;
-
-class AuthorizationApiErrorResopnse {
-    constructor(error, error_description, state) {
-        this.error = error;
-        this.error_description = error_description;
-        this.state = state;
-    }
-}
-
-class TokenApiSuccessResponse {
-    constructor(access_token, token_type, expires_in, refresh_token) {
-        this.access_token = access_token;
-        this.token_type = token_type;
-        this.expires_in = expires_in;
-        this.refresh_token = refresh_token;
-    }
-
-    static buildForResourceOwnerPasswordCredentialsFlow(access_token, token_type, expires_in, refresh_token) {
-        return new TokenApiSuccessResponse(access_token, token_type, Number(expires_in), refresh_token);
-    }
-
-    static buildForClientCredentialFlow(access_token, token_type, expires_in) {
-        return new TokenApiSuccessResponse(access_token, token_type, Number(expires_in), null);
-    }
-}
-
-class TokenApiErrorResopnse {
-    constructor(error, error_description) {
-        this.error = error;
-        this.error_description = error_description;
-    }
-}
 
 router
     .get('/authorize', (req, res, next) => {
