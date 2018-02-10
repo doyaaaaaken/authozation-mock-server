@@ -8,7 +8,7 @@ const sassMiddleware = require('node-sass-middleware');
 
 const index = require('./routes/index');
 const oauth2Routes = require('./routes/oauth2');
-const codeFlows = require('./routes/code-flow');
+const openidConnectRoutes = require('./routes/openid-connect');
 
 const app = express();
 
@@ -31,8 +31,8 @@ app.use(sassMiddleware({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/oauth2', oauth2Routes);
-app.use('/code-flow', codeFlows); //OpenID Connect 'Authentication Code Flow' endpoints
+app.use('/auth-server/oauth2', oauth2Routes);
+app.use('/auth-server/openid-connect', openidConnectRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

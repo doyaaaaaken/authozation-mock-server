@@ -9,7 +9,7 @@ This mock server is implemented according to the specification of [OAuth2.0](htt
 
 # Group OAuth2.0 endpoints
 
-## Authorization Endpoint [/oauth2/authorize{?response_type}{&client_id}{&redirect_uri}{&scope}{&state}]
+## Authorization Endpoint [/auth-server/oauth2/authorize{?response_type}{&client_id}{&redirect_uri}{&scope}{&state}]
 
 This endpoint is described at [RFC6749 section-3.1](https://tools.ietf.org/html/rfc6749#section-3.1).
 This endpoint is used to interact with the resource owner and obtain an authorization grant.
@@ -44,7 +44,7 @@ This endpoint is calld on `Authorization Code Flow` and `Implicit Flow`.
 
 
 
-## Token Endpoint [/oauth2/token]
+## Token Endpoint [/auth-server/oauth2/token]
 
 This endpoint is described at [RFC6749 section-3.2](https://tools.ietf.org/html/rfc6749#section-3.2).
 The token endpoint is used by the client to obtain an access token by presenting its authorization grant or refresh token.
@@ -91,7 +91,7 @@ This endpoint is called EXCEPT on `Implicit Flow`.
 
 # Group OpenID Connect 1.0 Endpoints
 
-## Authorize [/code-flow/authorize{?scope}{&response_type}{&client_id}{&redirect_uri}{&state}]
+## Authorize [/auth-server/openid-connect/authorize{?scope}{&response_type}{&client_id}{&redirect_uri}{&state}]
 
 ### Authentication Request [GET]
 
