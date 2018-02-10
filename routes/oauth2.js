@@ -1,6 +1,8 @@
 const router = require('express').Router();
+const uuid4 = require('uuid/v4');
 
 const parseScopeList = (scope) => (scope ? scope : "").split(' ');
+const EXPIRES_IN = 3600;
 
 class TokenApiSuccessResponse {
     constructor(access_token, token_type, expires_in, refresh_token) {
@@ -25,9 +27,6 @@ class TokenApiErrorResopnse {
         this.error_description = error_description;
     }
 }
-
-const EXPIRES_IN = 3600;
-//TODO: generate access token from uuid.
 
 //TODO: implement flow 1.
 router
@@ -56,14 +55,14 @@ router
             } else if (!password) {
                 res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter password required.'));
             } else if (username === 'test' && password === 'testtest') {
-                const responseBody = TokenApiSuccessResponse.buildForResourceOwnerPasswordCredentialsFlow('xxxxxx', 'bearer', EXPIRES_IN, 'xxxxx');
+                const responseBody = TokenApiSuccessResponse.buildForResourceOwnerPasswordCredentialsFlow(uuid4(), 'bearer', EXPIRES_IN, uuid4());
                 res.json(responseBody);
             } else {
                 res.status(401).send(new TokenApiErrorResopnse('invalid_grant', 'invalid username and password combination.'));
             }
 
         } else if (grantType === 'client_credentials') { //Client Credential Grant Flow [https://tools.ietf.org/html/rfc6749#section-4.4]
-            const responseBody = TokenApiSuccessResponse.buildForClientCredentialFlow('xxx-acc-token', 'bearer', EXPIRES_IN);
+            const responseBody = TokenApiSuccessResponse.buildForClientCredentialFlow(uuid4(), 'bearer', EXPIRES_IN);
             res.json(responseBody);
 
         } else {
