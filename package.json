@@ -1,5 +1,5 @@
 {
-  "name": "open-id-connect-mock-server",
+  "name": "authozation-mock-server",
   "version": "0.0.0",
   "private": true,
   "scripts": {
