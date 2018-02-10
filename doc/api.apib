@@ -9,11 +9,13 @@ This mock server is implemented according to the specification of [OAuth2.0](htt
 
 # Group OAuth2.0 endpoints
 
-## Authorization Endpoint [/oauth2/authorize{?response_type}]
+## Authorization Endpoint [/oauth2/authorize{?response_type}{&client_id}{&redirect_uri}{&scope}{&state}]
 
 This endpoint is described at [RFC6749 section-3.1](https://tools.ietf.org/html/rfc6749#section-3.1).
 This endpoint is used to interact with the resource owner and obtain an authorization grant.
 Authorization server verify the identity of resource owner from request information.
+
+This endpoint is calld on `Authorization Code Flow` and `Implicit Flow`.
 
 ### Authentication Request [GET]
 
@@ -21,8 +23,24 @@ Authorization server verify the identity of resource owner from request informat
 
     + response_type: code (string) - If client want to call api with `Authorization Code Flow`, this value MUST be `code`.
     If `Implicit Flow`, this value MUST be `token`.
+    + client_id: cid_12343 (string) - The client identifier.
+    + redirect_uri: https://example.com/callback (string, optional) - Redirect target uri implemented on client.
+    + scope: profile (string, optional) - The scope of the access request.
+    + state: xhogeaweg (string, optional) - An opque value used by the client to maintain state between the request and callback.
 
 + Response 302
+
+    + Body
+
+        `Location: https://client.example.com/cb?code=SplxlOBeZQQYbYS6WxSbIA&state=xhogeaweg`
+
++ Response 400 (application/json)
+
+    + Body
+
+        {
+            "error":"invalid_request"
+        }
 
 
 
@@ -30,13 +48,17 @@ Authorization server verify the identity of resource owner from request informat
 
 This endpoint is described at [RFC6749 section-3.2](https://tools.ietf.org/html/rfc6749#section-3.2).
 The token endpoint is used by the client to obtain an access token by presenting its authorization grant or refresh token.
-This endpoint is called, except on `Implicit Flow`.
+
+This endpoint is called EXCEPT on `Implicit Flow`.
 
 ### Token Request [POST]
 
 + Request (application/x-www-form-urlencoded)
 
     + grant_type: client_credentials (string) - If authorization grant type is `Client Credentials Grant`, the value MUST be `client_credentials`.
+    + refresh_token: tGzv3JOkF0XG5Qx2TlKWIA (string, optional) - If you need to obtain new access token instead of expired one, you send request with refresh token.
+    + username: michel (string, optional) - This parameter is used at `Resource owner password credentials Grant Flow`. This means resource owner username.
+    + password: xoytenage (string, optional) - This parameter is used at `Resource owner password credentials Grant Flow`. This means resource owner password.
     + scope: profile (string, optional) - Access token scope parameter which allows clients to access resource.
 
 + Response 200 (application/json)
@@ -47,7 +69,16 @@ This endpoint is called, except on `Implicit Flow`.
             "access_token":"2YotnFZFEjr1zCsicMWpAA",
             "token_type":"example",
             "expires_in":3600,
+            "refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
             "example_parameter":"example_value"
+        }
+
++ Response 400 (application/json)
+
+    + Body
+
+        {
+            "error":"invalid_request"
         }
 
 
