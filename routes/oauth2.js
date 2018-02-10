@@ -3,7 +3,6 @@ const router = require('express').Router();
 const parseScopeList = (scope) => (scope ? scope : "").split(' ');
 
 class TokenApiSuccessResponse {
-
     constructor(access_token, token_type, expires_in, refresh_token) {
         this.access_token = access_token;
         this.token_type = token_type;
@@ -17,6 +16,13 @@ class TokenApiSuccessResponse {
 
     static buildForClientCredentialFlow(access_token, token_type, expires_in) {
         return new TokenApiSuccessResponse(access_token, token_type, Number(expires_in), null);
+    }
+}
+
+class TokenApiErrorResopnse {
+    constructor(error, error_description) {
+        this.error = error;
+        this.error_description = error_description;
     }
 }
 
@@ -45,16 +51,15 @@ router
             const username = req.body.username;
             const password = req.body.password;
 
-            //TODO: implement error resopnse
             if(!username) {
-                res.status(400).send("parameter username required.");
+                res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter username required.'));
             } else if (!password) {
-                res.status(400).send("parameter username required.");
+                res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter password required.'));
             } else if (username === 'test' && password === 'testtest') {
                 const responseBody = TokenApiSuccessResponse.buildForResourceOwnerPasswordCredentialsFlow('xxxxxx', 'bearer', EXPIRES_IN, 'xxxxx');
                 res.json(responseBody);
             } else {
-                res.status(401).send('');
+                res.status(401).send(new TokenApiErrorResopnse('invalid_grant', 'invalid username and password combination.'));
             }
 
         } else if (grantType === 'client_credentials') { //Client Credential Grant Flow [https://tools.ietf.org/html/rfc6749#section-4.4]
@@ -62,7 +67,7 @@ router
             res.json(responseBody);
 
         } else {
-            res.status(400).send("grant_type parameter wrong.");
+            res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter grant_type invalid.'));
         }
     });
 
