@@ -2,9 +2,9 @@ const router = require('express').Router();
 const url = require('url');
 const uuid4 = require('uuid/v4');
 
-const AuthorizationApiErrorResopnse = require('../models/oauth2/AuthorizationApiErrorResopnse');
-const TokenApiSuccessResponse = require('../models/oauth2/TokenApiSuccessResponse');
-const TokenApiErrorResopnse = require('../models/oauth2/TokenApiErrorResopnse');
+const AuthorizationApiErrorResopnse = require('../../models/oauth2/AuthorizationApiErrorResopnse');
+const TokenApiSuccessResponse = require('../../models/oauth2/TokenApiSuccessResponse');
+const TokenApiErrorResopnse = require('../../models/oauth2/TokenApiErrorResopnse');
 
 const parseScopeList = (scope) => (scope ? scope : "").split(' ');
 const parseUri = (uri) => {
