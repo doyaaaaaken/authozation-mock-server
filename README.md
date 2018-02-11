@@ -16,7 +16,11 @@ See details on `Endpoints` section.
 | run application with debugging | `npm run debug` |
 | test application | `npm test` |
 
-# Endpoints
+# Demo page
+
+Run application, and access `http://localhost:3000/`. So you experience easily authorization flow.
+
+# API Documentation (Only authorization server)
 
 See API Documentation. Document exists below folder.
 
