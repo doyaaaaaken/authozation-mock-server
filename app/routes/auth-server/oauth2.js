@@ -85,6 +85,15 @@ router
                 res.status(401).send(new TokenApiErrorResopnse('invalid_grant', 'invalid username and password combination.'));
             }
 
+        } else if (grantType === 'refresh_token') { //Refreshing an access token [https://tools.ietf.org/html/rfc6749#section-6]
+            const refreshToken = req.body.refresh_token;
+
+            if(!refreshToken) {
+                res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter refresh_token required.'));
+            } else {
+                const responseBody = TokenApiSuccessResponse.buildForResourceOwnerPasswordCredentialsFlow(uuid4(), 'bearer', EXPIRES_IN, uuid4());
+                res.json(responseBody);
+            }
         } else if (grantType === 'client_credentials') { //Client Credential Grant Flow [https://tools.ietf.org/html/rfc6749#section-4.4]
             const responseBody = TokenApiSuccessResponse.buildForClientCredentialFlow(uuid4(), 'bearer', EXPIRES_IN);
             res.json(responseBody);
