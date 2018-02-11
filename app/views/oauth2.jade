@@ -2,12 +2,13 @@ extends layout
 
 block content
     h1= "OAuth2.0 Sample"
-    p Click below button and start authorization...
+    p Click below button to start authorization...
+    p To click button, you send request to authorization server.
     div
         input(
         type="button",
-        value="Start Authorization",
-        onClick="location.href='/'"
+        value="Authorization Code Flow",
+        onClick="location.href='/auth-server/oauth2/authorization-confirm'"
         )
     hr
     div

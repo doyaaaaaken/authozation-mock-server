@@ -19,6 +19,9 @@ const EXPIRES_IN = 3600;
 const CLIENT_CALLBACK_URI = 'http://localhost:3000/client-app/oauth2/callback';
 
 router
+    .get('/authorization-confirm', (req, res, next) => {
+        res.render('oauth2-confirm', { title: 'OAuth2 Confirm' });
+    })
     .get('/authorize', (req, res, next) => {
         const responseType = req.query["response_type"];
         const clientId = req.query["client_id"];

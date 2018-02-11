@@ -1,0 +1,23 @@
+extends layout
+
+block content
+    h1= "OAuth2.0 Authorization Confirmation"
+    p Is it OK to authorize below permissions?
+    ul
+        li profile
+        li email
+
+    div
+        input(
+        type="button",
+        value="OK",
+        onClick="location.href='/auth-server/oauth2/authorize?response_type=code&client_id=hogehoge'"
+        )
+        input(
+        type="button",
+        value="Deny",
+        onClick="location.href='/client-app/oauth2/'"
+        )
+    hr
+    div
+        a(href="/client-app/oauth2/") Back
