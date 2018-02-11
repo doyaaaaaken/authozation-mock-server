@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const request = require('request');
+const url = require('url');
 
 router
     .get('/', (req, res, next) => {
@@ -36,10 +37,7 @@ router
     })
     //This callback endpoint is called by Implicit Flow.
     .get('/callback/implicit-flow', (req, res, next) => {
-        //TODO: implement
-        //fetch access token in uri fragment.
-        //set this.
-        res.render('oauth2-result', {result: 'Success', description: ''});
+        res.render('oauth2-result', {result: '', description: ''});
     });
 
 module.exports = router;

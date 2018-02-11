@@ -3,10 +3,27 @@ extends layout
 block content
     span(style="background-color: #a6efb9") [Client Application Page]
     h1= "OAuth2.0 Authorization Result"
-    p Result #{result}
-    p= description
+    p(id="result") Result #{result}
+    p(id="description")= description
     hr
     div
         a(href="/") Back to Top page.
     div
         a(href="/client-app/oauth2/") Back to Oauth 2.0 page.
+    script(type='text/javascript').
+        const uriFragmentPairList = window.location.hash.substr(1).split('&').map(kv => kv.split('='));
+        const accessTokenPair = uriFragmentPairList.find((pair) => pair[0] === "access_token");
+        const accessToken = (accessTokenPair) ? accessTokenPair[1] : '';
+
+        if(accessToken) {
+            document.getElementById('result').innerText = 'Result Success';
+            document.getElementById('description').innerText = `accessToken = ${accessToken}`;
+        } else {
+            const errorPair = uriFragmentPairList.find((pair) => pair[0] === "error");
+            const error = (errorPair) ? errorPair[1] : '';
+            const errorDescPair = uriFragmentPairList.find((pair) => pair[0] === "error_description");
+            const errorDesc = (errorDescPair) ? errorDescPair[1] : '';
+
+            document.getElementById('result').innerText = 'Result Error';
+            document.getElementById('description').innerText = `error = ${error}, error_description = ${errorDesc}`;
+        }
