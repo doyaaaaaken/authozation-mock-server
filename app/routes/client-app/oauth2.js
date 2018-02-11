@@ -5,8 +5,8 @@ router
     .get('/', (req, res, next) => {
         res.render('oauth2', {title: 'OAuth2 Sample'});
     })
-    //This endpoint is called by Authorization Code Flow.
-    .get('/callback', (req, res, next) => {
+    //This callback endpoint is called by Authorization Code Flow.
+    .get('/callback/authorization-code-flow', (req, res, next) => {
         const code = req.query["code"];
         const state = req.query["state"];
 
@@ -18,21 +18,28 @@ router
             form: {
                 "grant_type": "authorization_code",
                 "code": (code) ? code : null,
-                "redirect_uri": "http://localhost:3000/client-app/oauth2/callback",
+                "redirect_uri": "http://localhost:3000/client-app/oauth2/callback/authorization-code-flow",
                 "client_id": "cid-xxx-12345"
             }
         };
         request.post(options, (error, response, body) => {
-            if(error) {
+            if (error) {
                 res.render('oauth2-result', {result: 'ERROR'});
             } else {
-                if(response.statusCode !== 200) {
+                if (response.statusCode !== 200) {
                     res.render('oauth2-result', {result: 'Failed', description: JSON.stringify(response.body)});
                 } else {
                     res.render('oauth2-result', {result: 'Success', description: JSON.stringify(response.body)});
                 }
             }
         });
+    })
+    //This callback endpoint is called by Implicit Flow.
+    .get('/callback/implicit-flow', (req, res, next) => {
+        //TODO: implement
+        //fetch access token in uri fragment.
+        //set this.
+        res.render('oauth2-result', {result: 'Success', description: ''});
     });
 
 module.exports = router;

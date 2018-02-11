@@ -9,7 +9,13 @@ block content
         input(
         type="button",
         value="Authorization Code Flow",
-        onClick="location.href='/auth-server/oauth2/authorization-confirm'"
+        onClick="location.href='/auth-server/oauth2/authorization-confirm?x-flow=authorizationCode'"
+        )
+    div
+        input(
+        type="button",
+        value="Implicit Flow",
+        onClick="location.href='/auth-server/oauth2/authorization-confirm?x-flow=implicit'"
         )
     hr
     div

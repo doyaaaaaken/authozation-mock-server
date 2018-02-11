@@ -20,13 +20,17 @@ const CLIENT_CALLBACK_URI = 'http://localhost:3000/client-app/oauth2/callback';
 
 router
     .get('/authorization-confirm', (req, res, next) => {
-        res.render('oauth2-confirm', { title: 'OAuth2 Confirm' });
+        const flowType = req.query['x-flow']; //Specific in this app, not declared in RFC.
+        const responseType = (flowType === 'authorizationCode') ? 'code' : 'token';
+        const redirectUriPath = (flowType === 'authorizationCode') ? 'authorization-code-flow' : 'implicit-flow';
+        res.render('oauth2-confirm', { title: 'OAuth2 Confirm', responseType: responseType, redirectUriPath: redirectUriPath});
     })
     .get('/authorize', (req, res, next) => {
         const responseType = req.query["response_type"];
         const clientId = req.query["client_id"];
         const parsedRedirectUri = parseUri(req.query["redirect_uri"]);
-        const redirectUri = (parsedRedirectUri) ? parsedRedirectUri : CLIENT_CALLBACK_URI;
+        const defaultCallbackUri = CLIENT_CALLBACK_URI + (responseType === 'code') ? 'authorization-code-flow' : 'implicit-flow';
+        const redirectUri = (parsedRedirectUri) ? parsedRedirectUri : defaultCallbackUri;
         const scopeList = parseScopeList(req.query["scope"]);
         const state = req.query["state"];
 
