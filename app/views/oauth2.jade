@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    h1= "OAuth2.0 Sample"
+    p Click below button and start authorization...
+    div
+        input(
+        type="button",
+        value="Start Authorization",
+        onClick="location.href='/'"
+        )
+    hr
+    div
+        a(href="/") Top page
