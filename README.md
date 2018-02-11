@@ -19,6 +19,7 @@ See details on `Endpoints` section.
 # Demo page
 
 Run application, and access `http://localhost:3000/`. So you experience easily authorization flow.
+![Top Page](https://github.com/doyaaaaaken/authozation-mock-server/blob/master/img/top-page.png "Top Page")
 
 # API Documentation (Only authorization server)
 
