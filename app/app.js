@@ -8,8 +8,9 @@ const sassMiddleware = require('node-sass-middleware');
 
 const index = require('./routes/index');
 const oauth2ServerRoutes = require('./routes/auth-server/oauth2');
-const openidConnectRoutes = require('./routes/auth-server/openid-connect');
+const openidConnectServerRoutes = require('./routes/auth-server/openid-connect');
 const oauth2ClientRoutes = require('./routes/client-app/oauth2');
+const openidConnectClientRoutes = require('./routes/client-app/openid-connect');
 
 const app = express();
 
@@ -33,8 +34,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/auth-server/oauth2', oauth2ServerRoutes);
-app.use('/auth-server/openid-connect', openidConnectRoutes);
+app.use('/auth-server/openid-connect', openidConnectServerRoutes);
 app.use('/client-app/oauth2', oauth2ClientRoutes);
+app.use('/client-app/openid-connect', openidConnectClientRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
