@@ -19,7 +19,7 @@ const parseScopeList = (scope) => (scope ? scope : "").split(' ').filter((value)
     }
 });
 
-const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirectUri, state, prompt) => {
+const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirectUri, state, prompt, nonce) => {
     const scopeList = parseScopeList(scope);
 
     if (!scopeList) {
@@ -47,12 +47,14 @@ const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirec
                 res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'Bad request: \'client_id\' parameter is REQUIRED.', state));
             } else if (!redirectUri) {
                 res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'Bad request: \'redirect_uri\' parameter is REQUIRED.', state));
+            } else if (!nonce) {
+                res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'Bad request: \'nonce\' parameter is REQUIRED.', state));
             } else if (prompt === "none") {
                 res.status(302).header('Location', new AuthorizationApiErrorResopnse('login_required', 'Bad request: \'prompt\' parameter is \'none\', and user is not authenticated.', state).toUriWithFragment(redirectUri)).send();
             } else {
                 const accessTokenQuery = (responseType === "id_token") ? '' : `access_token=${uuid4()}`;
                 const tokenTypeQuery = '&token_type=Bearer';
-                const idTokenQuery = `&id_token=${JWTFactory.createToken()}`;
+                const idTokenQuery = `&id_token=${JWTFactory.createToken(nonce)}`;
                 const stateQuery = (state) ? `&state=${state}` : '';
                 const expiresInQuery = '&expires_in=3600';
                 res.status(302).header('Location', `${redirectUri}#${accessTokenQuery}${tokenTypeQuery}${idTokenQuery}${stateQuery}${expiresInQuery}`).send();
@@ -90,10 +92,11 @@ router
         let redirectUri = req.query["redirect_uri"];
         const state = req.query["state"];
         const prompt = req.query["prompt"];
+        const nonce = req.query["nonce"];
 
         redirectUri = redirectUri ? redirectUri : CLIENT_CALLBACK_URI;
 
-        responseByAuthorizeEndpoint(res, scope, responseType, clientId, redirectUri, state, prompt);
+        responseByAuthorizeEndpoint(res, scope, responseType, clientId, redirectUri, state, prompt, nonce);
     })
     .post('/authorize', (req, res, next) => {
         const scope = req.body.scope;
@@ -101,11 +104,12 @@ router
         const clientId = req.body.client_id;
         let redirectUri = req.body.redirect_uri;
         const state = req.body.state;
-        const prompt = req.query["prompt"];
+        const prompt = req.body.prompt;
+        const nonce = req.body.nonce;
 
         redirectUri = redirectUri ? redirectUri : CLIENT_CALLBACK_URI;
 
-        responseByAuthorizeEndpoint(res, scope, responseType, clientId, redirectUri, state, prompt);
+        responseByAuthorizeEndpoint(res, scope, responseType, clientId, redirectUri, state, prompt, nonce);
     })
     .post('/token', (req, res, next) => {
         const grantType = req.body.grant_type;
