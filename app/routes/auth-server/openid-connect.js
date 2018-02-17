@@ -48,13 +48,13 @@ const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirec
             } else if (prompt === "none") {
                 res.status(302).header('Location', new AuthorizationApiErrorResopnse('login_required', 'Bad request: \'prompt\' parameter is \'none\', and user is not authenticated.', state).toUriWithFragment(redirectUri)).send();
             } else {
-                const accessToken = (responseType === "id_token") ? '' : uuid4();
+                const accessTokenQuery = (responseType === "id_token") ? '' : `access_token=${uuid4()}`;
                 const tokenTypeQuery = '&token_type=Bearer';
                 //TODO: Generate id token as JWT Token.
                 const idTokenQuery = '&id_token=reerebeghawe4xgphawbaw-9bhw9awh9b-wah9haw90bahbarba';
                 const stateQuery = (state) ? `&state=${state}` : '';
                 const expiresInQuery = '&expires_in=3600';
-                res.status(302).header('Location', `${redirectUri}#access_token=${accessToken}${tokenTypeQuery}${idTokenQuery}${stateQuery}${expiresInQuery}`).send();
+                res.status(302).header('Location', `${redirectUri}#${accessTokenQuery}${tokenTypeQuery}${idTokenQuery}${stateQuery}${expiresInQuery}`).send();
             }
 
             //Hybrid Flow (http://openid-foundation-japan.github.io/openid-connect-core-1_0.ja.html#HybridFlowAuth)
@@ -102,7 +102,7 @@ router
         var redirectUri = req.body.redirect_uri;
         const state = req.body.state;
         const prompt = req.query["prompt"];
-        
+
         redirectUri = redirectUri ? redirectUri : CLIENT_CALLBACK_URI;
 
         responseByAuthorizeEndpoint(res, scope, responseType, clientId, redirectUri, state, prompt);
