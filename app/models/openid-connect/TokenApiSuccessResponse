@@ -1,0 +1,15 @@
+class TokenApiSuccessResponse {
+    constructor(access_token, token_type, expires_in, refresh_token, id_token) {
+        this.access_token = access_token;
+        this.token_type = token_type;
+        this.expires_in = expires_in;
+        this.refresh_token = refresh_token;
+        this.id_token = id_token;
+    }
+
+    static build(access_token, token_type, expires_in, refresh_token, id_token) {
+        return new TokenApiSuccessResponse(access_token, token_type, Number(expires_in), refresh_token, id_token);
+    }
+}
+
+module.exports = TokenApiSuccessResponse;

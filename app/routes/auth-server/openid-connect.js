@@ -2,6 +2,8 @@ const router = require('express').Router();
 const uuid4 = require('uuid/v4');
 
 const AuthorizationApiErrorResopnse = require('../../models/openid-connect/AuthorizationApiErrorResopnse');
+const TokenApiSuccessResponse = require('../../models/openid-connect/TokenApiSuccessResponse');
+const TokenApiErrorResopnse = require('../../models/openid-connect/TokenApiErrorResopnse');
 
 const preDefinedScopeList = ["openid", "profile", "email", "address", "phone"];
 
@@ -104,12 +106,17 @@ router
         responseByAuthorizeEndpoint(res, scope, responseType, clientId, redirectUri, state, prompt);
     })
     .post('/token', (req, res, next) => {
-        //TODO: implement (http://openid-foundation-japan.github.io/openid-connect-core-1_0.ja.html#TokenEndpoint)
         const grantType = req.body.grant_type;
-        if (grantType !== 'authorization_code') {
-            res.status(400).send("grant_type parameter must be 'authorization_code'.");
+        const grantCode = req.body.code;
+
+        //Authorization Code Flow and Hybrid Flow.
+        if (grantType === 'authorization_code') {
+            ///TODO: Generate id token as JWT Token.
+            const responseBody = TokenApiSuccessResponse.build(uuid4(), 'bearer', EXPIRES_IN, uuid4(), uuid4());
+            res.json(responseBody);
+
         } else {
-            res.send('');
+            res.status(400).json(new TokenApiErrorResopnse('invalid_request', `grant_type parameter ${grantType} invalid.`));
         }
     });
 

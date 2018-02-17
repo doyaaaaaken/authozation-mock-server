@@ -69,7 +69,6 @@ router
             const redirectUri = req.body.redirect_uri;
             const clientId = req.body.client_id;
 
-            //TODO: verify grantCode (Validate unchanging between issued grant code and received grant code).
             if (!grantCode) {
                 res.status(400).json(new TokenApiErrorResopnse('invalid_request', 'parameter code required.'));
             } else {
