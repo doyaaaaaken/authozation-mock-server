@@ -45,9 +45,35 @@ const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirec
                 res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'Bad request: \'client_id\' parameter is REQUIRED.', state));
             } else if (!redirectUri) {
                 res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'Bad request: \'redirect_uri\' parameter is REQUIRED.', state));
+            } else if (prompt === "none") {
+                res.status(302).header('Location', new AuthorizationApiErrorResopnse('login_required', 'Bad request: \'prompt\' parameter is \'none\', and user is not authenticated.', state).toUriWithFragment(redirectUri)).send();
             } else {
-                //TODO: Implement Implicit Code Flow.
-                res.status(302).header('Location', '').send();
+                const accessToken = (responseType === "id_token") ? '' : uuid4();
+                const tokenTypeQuery = '&token_type=Bearer';
+                //TODO: Generate id token as JWT Token.
+                const idTokenQuery = '&id_token=reerebeghawe4xgphawbaw-9bhw9awh9b-wah9haw90bahbarba';
+                const stateQuery = (state) ? `&state=${state}` : '';
+                const expiresInQuery = '&expires_in=3600';
+                res.status(302).header('Location', `${redirectUri}#access_token=${accessToken}${tokenTypeQuery}${idTokenQuery}${stateQuery}${expiresInQuery}`).send();
+            }
+
+            //Hybrid Flow (http://openid-foundation-japan.github.io/openid-connect-core-1_0.ja.html#HybridFlowAuth)
+        } else if (responseType === 'code id_token' || responseType === 'code token' || responseType === 'code id_token token') {
+            if (!clientId) {
+                res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'Bad request: \'client_id\' parameter is REQUIRED.', state));
+            } else if (!redirectUri) {
+                res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'Bad request: \'redirect_uri\' parameter is REQUIRED.', state));
+            } else if (prompt === "none") {
+                res.status(302).header('Location', new AuthorizationApiErrorResopnse('login_required', 'Bad request: \'prompt\' parameter is \'none\', and user is not authenticated.', state).toUriWithFragment(redirectUri)).send();
+            } else {
+                const grantCode = uuid4();
+                const accessTokenQuery = responseType.contains("token") ? `&access_token=${uuid4()}`: '';
+                const tokenTypeQuery = responseType.contains("token") ? '&token_type=Bearer': '';
+                //TODO: Generate id token as JWT Token.
+                const idTokenQuery = responseType.contains("id_token") ? '&id_token=reerebeghawe4xgphawbaw-9bhw9awh9b-wah9haw90bahbarba' : '';
+                const stateQuery = (state) ? `&state=${state}` : '';
+                const expiresInQuery = '&expires_in=3600';
+                res.status(302).header('Location', `${redirectUri}#code=${grantCode}${accessTokenQuery}${tokenTypeQuery}${idTokenQuery}${stateQuery}${expiresInQuery}`).send();
             }
 
         } else {
