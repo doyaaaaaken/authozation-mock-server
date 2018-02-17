@@ -6,6 +6,7 @@ const TokenApiSuccessResponse = require('../../models/openid-connect/TokenApiSuc
 const TokenApiErrorResopnse = require('../../models/openid-connect/TokenApiErrorResopnse');
 
 const preDefinedScopeList = ["openid", "profile", "email", "address", "phone"];
+const CLIENT_CALLBACK_URI = 'http://localhost:3000/client-app/openid-connect/callback';
 
 const parseScopeList = (scope) => (scope ? scope : "").split(' ').filter((value) => {
     if (preDefinedScopeList.includes(value)) {
@@ -24,11 +25,8 @@ const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirec
     } else if (!scopeList.includes('openid')) {
         res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'scope parameter list must contains \'openid\' value.', state));
     } else {
-        if (!responseType) {
-            res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'Bad request: \'response_type\' parameter is REQUIRED.', state));
-
             //Authentication Code Flow (http://openid-foundation-japan.github.io/openid-connect-core-1_0.ja.html#CodeFlowAuth)
-        } else if (responseType === 'code') {
+        if (responseType === 'code') {
             if (!clientId) {
                 res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', 'Bad request: \'client_id\' parameter is REQUIRED.', state));
             } else if (!redirectUri) {
@@ -79,7 +77,7 @@ const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirec
             }
 
         } else {
-            res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', '\'scope\' parameter must have value \'code\' in authorization code flow.', state));
+            res.status(400).json(new AuthorizationApiErrorResopnse('invalid_request', `Bad request: \'response_type\' parameter ${responseType} is invalid.`, state));
         }
     }
 };
@@ -89,9 +87,11 @@ router
         const scope = req.query["scope"];
         const responseType = req.query["response_type"];
         const clientId = req.query["client_id"];
-        const redirectUri = req.query["redirect_uri"];
+        var redirectUri = req.query["redirect_uri"];
         const state = req.query["state"];
         const prompt = req.query["prompt"];
+
+        redirectUri = redirectUri ? redirectUri : CLIENT_CALLBACK_URI;
 
         responseByAuthorizeEndpoint(res, scope, responseType, clientId, redirectUri, state, prompt);
     })
@@ -99,9 +99,11 @@ router
         const scope = req.body.scope;
         const responseType = req.body.response_type;
         const clientId = req.body.client_id;
-        const redirectUri = req.body.redirect_uri;
+        var redirectUri = req.body.redirect_uri;
         const state = req.body.state;
         const prompt = req.query["prompt"];
+        
+        redirectUri = redirectUri ? redirectUri : CLIENT_CALLBACK_URI;
 
         responseByAuthorizeEndpoint(res, scope, responseType, clientId, redirectUri, state, prompt);
     })
