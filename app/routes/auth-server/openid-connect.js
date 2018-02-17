@@ -4,6 +4,8 @@ const uuid4 = require('uuid/v4');
 const AuthorizationApiErrorResopnse = require('../../models/openid-connect/AuthorizationApiErrorResopnse');
 const TokenApiSuccessResponse = require('../../models/openid-connect/TokenApiSuccessResponse');
 const TokenApiErrorResopnse = require('../../models/openid-connect/TokenApiErrorResopnse');
+const JWTFactory = require('../../models/openid-connect/JWTFactory');
+JWTFactory.init();
 
 const preDefinedScopeList = ["openid", "profile", "email", "address", "phone"];
 const CLIENT_CALLBACK_URI = 'http://localhost:3000/client-app/openid-connect/callback';
@@ -50,8 +52,7 @@ const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirec
             } else {
                 const accessTokenQuery = (responseType === "id_token") ? '' : `access_token=${uuid4()}`;
                 const tokenTypeQuery = '&token_type=Bearer';
-                //TODO: Generate id token as JWT Token.
-                const idTokenQuery = '&id_token=reerebeghawe4xgphawbaw-9bhw9awh9b-wah9haw90bahbarba';
+                const idTokenQuery = `&id_token=${JWTFactory.createToken()}`;
                 const stateQuery = (state) ? `&state=${state}` : '';
                 const expiresInQuery = '&expires_in=3600';
                 res.status(302).header('Location', `${redirectUri}#${accessTokenQuery}${tokenTypeQuery}${idTokenQuery}${stateQuery}${expiresInQuery}`).send();
@@ -69,8 +70,7 @@ const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirec
                 const grantCode = uuid4();
                 const accessTokenQuery = responseType.contains("token") ? `&access_token=${uuid4()}`: '';
                 const tokenTypeQuery = responseType.contains("token") ? '&token_type=Bearer': '';
-                //TODO: Generate id token as JWT Token.
-                const idTokenQuery = responseType.contains("id_token") ? '&id_token=reerebeghawe4xgphawbaw-9bhw9awh9b-wah9haw90bahbarba' : '';
+                const idTokenQuery = responseType.contains("id_token") ? `&id_token=${JWTFactory.createToken()}` : '';
                 const stateQuery = (state) ? `&state=${state}` : '';
                 const expiresInQuery = '&expires_in=3600';
                 res.status(302).header('Location', `${redirectUri}#code=${grantCode}${accessTokenQuery}${tokenTypeQuery}${idTokenQuery}${stateQuery}${expiresInQuery}`).send();
@@ -113,8 +113,8 @@ router
 
         //Authorization Code Flow and Hybrid Flow.
         if (grantType === 'authorization_code') {
-            ///TODO: Generate id token as JWT Token.
-            const responseBody = TokenApiSuccessResponse.build(uuid4(), 'bearer', EXPIRES_IN, uuid4(), uuid4());
+            const idToken = JWTFactory.createToken();
+            const responseBody = TokenApiSuccessResponse.build(uuid4(), 'bearer', EXPIRES_IN, uuid4(), idToken);
             res.json(responseBody);
 
         } else {
