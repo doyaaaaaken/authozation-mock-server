@@ -87,7 +87,7 @@ router
         const scope = req.query["scope"];
         const responseType = req.query["response_type"];
         const clientId = req.query["client_id"];
-        var redirectUri = req.query["redirect_uri"];
+        let redirectUri = req.query["redirect_uri"];
         const state = req.query["state"];
         const prompt = req.query["prompt"];
 
@@ -99,7 +99,7 @@ router
         const scope = req.body.scope;
         const responseType = req.body.response_type;
         const clientId = req.body.client_id;
-        var redirectUri = req.body.redirect_uri;
+        let redirectUri = req.body.redirect_uri;
         const state = req.body.state;
         const prompt = req.query["prompt"];
 
