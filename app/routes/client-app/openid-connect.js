@@ -1,5 +1,14 @@
 const router = require('express').Router();
 const request = require('request');
+const jwt = require('jsonwebtoken');
+
+const validateIdToken = (idToken) => {
+    const decoded = jwt.decode(idToken, {complete: true});
+    const payload = decoded.payload;
+
+    //TODO: verify id token sign.
+    return payload.iss === 'http://localhost:3000/' && payload.aud === 'cid-xyz01234';
+};
 
 router
     .get('/', (req, res, next) => {
@@ -29,7 +38,12 @@ router
                 if (response.statusCode !== 200) {
                     res.render('openid-connect-result', {result: 'Failed', description: JSON.stringify(response.body), isImplicitFlow: false});
                 } else {
-                    res.render('openid-connect-result', {result: 'Success', description: JSON.stringify(response.body), isImplicitFlow: false});
+                    const idToken = JSON.parse(response.body).id_token;
+                    if(validateIdToken(idToken)) {
+                        res.render('openid-connect-result', {result: 'Success', description: JSON.stringify(response.body), isImplicitFlow: false});
+                    } else {
+                        res.render('openid-connect-result', {result: 'Failed (Id Token invalid)', description: JSON.stringify(response.body), isImplicitFlow: false});
+                    }
                 }
             }
         });
