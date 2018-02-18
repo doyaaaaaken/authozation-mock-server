@@ -1,13 +1,14 @@
 const router = require('express').Router();
 const request = require('request');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 const validateIdToken = (idToken) => {
-    const decoded = jwt.decode(idToken, {complete: true});
-    const payload = decoded.payload;
+    const cert = fs.readFileSync('conf/jwtRS256.key.pub');
 
-    //TODO: verify id token sign.
-    return payload.iss === 'http://localhost:3000/' && payload.aud === 'cid-xyz01234';
+    return jwt.verify(idToken, cert, {algorithms: 'RS256', issuer: 'http://localhost:3000/', audience: 'cid-xyz01234'}, (err, decoded) => {
+        return !err;
+    });
 };
 
 router
