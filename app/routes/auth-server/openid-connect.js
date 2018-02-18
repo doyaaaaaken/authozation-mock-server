@@ -116,7 +116,8 @@ router
         const flowType = req.query['x-flow']; //Specific in this app, not declared in RFC.
         const responseType = (flowType === 'authorizationCode') ? 'code' : (flowType === 'implicit') ? 'id_token token' : 'code id_token token';
         const redirectUriPath = (flowType === 'authorizationCode') ? 'authorization-code-flow' : (flowType === 'implicit') ? 'implicit-flow' : 'hybrid';
-        res.render('openid-connect-confirm', { title: 'OpenID Connect Confirm', responseType: responseType, redirectUriPath: redirectUriPath});
+        const nonce = uuid4();
+        res.render('openid-connect-confirm', { title: 'OpenID Connect Confirm', responseType: responseType, redirectUriPath: redirectUriPath, nonce: nonce});
     })
     .post('/token', (req, res, next) => {
         const grantType = req.body.grant_type;
