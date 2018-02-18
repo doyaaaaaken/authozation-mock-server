@@ -9,17 +9,23 @@ block content
     div
         a(href="/") Back to Top page.
     div
-        a(href="/client-app/openid-connect/") Back to OpenID Connect page.
+        a(href="/client-app/openid-connect/") Back to OpenID Connect Top page.
 
     if isImplicitFlow
         script(type='text/javascript').
             const uriFragmentPairList = window.location.hash.substr(1).split('&').map(kv => kv.split('='));
             const accessTokenPair = uriFragmentPairList.find((pair) => pair[0] === "access_token");
             const accessToken = (accessTokenPair) ? accessTokenPair[1] : '';
+            const idTokenPair = uriFragmentPairList.find((pair) => pair[0] === "id_token");
+            const idToken = (idTokenPair) ? idTokenPair[1] : '';
 
-            if(accessToken) {
+            if(idToken) {
                 document.getElementById('result').innerText = 'Result Success';
-                document.getElementById('description').innerText = `accessToken = ${accessToken}`;
+                if(accessToken) {
+                    document.getElementById('description').innerText = `idToken = ${idToken}\n\n accessToken = ${accessToken}`;
+                } else {
+                    document.getElementById('description').innerText = `accessToken = ${accessToken}`;
+                }
             } else {
                 const errorPair = uriFragmentPairList.find((pair) => pair[0] === "error");
                 const error = (errorPair) ? errorPair[1] : '';
