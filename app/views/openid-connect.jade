@@ -1,0 +1,28 @@
+extends layout
+
+block content
+    span(style="background-color: #a6efb9") [Client Application Page]
+    h1= title
+    p Click below button to start authorization...
+    p To click button, you send request to authorization server.
+    div
+        input(
+        type="button",
+        value="Authorization Code Flow",
+        onClick="location.href='/auth-server/openid-connect/authorization-confirm?x-flow=authorizationCode'"
+        )
+    div
+        input(
+        type="button",
+        value="Implicit Flow",
+        onClick="location.href='/auth-server/openid-connect/authorization-confirm?x-flow=implicit'"
+        )
+    div
+        input(
+        type="button",
+        value="Hybrid Flow",
+        onClick="location.href='/auth-server/openid-connect/authorization-confirm?x-flow=hybrid'"
+        )
+    hr
+    div
+        a(href="/") Top page

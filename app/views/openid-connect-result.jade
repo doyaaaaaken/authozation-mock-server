@@ -2,14 +2,14 @@ extends layout
 
 block content
     span(style="background-color: #a6efb9") [Client Application Page]
-    h1= "OAuth2.0 Authorization Result"
+    h1= "OpenID Connect Authorization Result"
     p(id="result") Result #{result}
     p(id="description")= description
     hr
     div
         a(href="/") Back to Top page.
     div
-        a(href="/client-app/oauth2/") Back to Oauth 2.0 page.
+        a(href="/client-app/openid-connect/") Back to OpenID Connect page.
 
     if isImplicitFlow
         script(type='text/javascript').

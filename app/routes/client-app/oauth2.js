@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const request = require('request');
-const url = require('url');
 
 router
     .get('/', (req, res, next) => {
@@ -28,16 +27,16 @@ router
                 res.render('oauth2-result', {result: 'ERROR'});
             } else {
                 if (response.statusCode !== 200) {
-                    res.render('oauth2-result', {result: 'Failed', description: JSON.stringify(response.body)});
+                    res.render('oauth2-result', {result: 'Failed', description: JSON.stringify(response.body), isImplicitFlow: false});
                 } else {
-                    res.render('oauth2-result', {result: 'Success', description: JSON.stringify(response.body)});
+                    res.render('oauth2-result', {result: 'Success', description: JSON.stringify(response.body), isImplicitFlow: false});
                 }
             }
         });
     })
     //This callback endpoint is called by Implicit Flow.
     .get('/callback/implicit-flow', (req, res, next) => {
-        res.render('oauth2-result', {result: '', description: ''});
+        res.render('oauth2-result', {result: '', description: '', isImplicitFlow: true});
     });
 
 module.exports = router;

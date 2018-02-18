@@ -10,7 +10,7 @@ class JWTFactory {
         let claim = {
             iss: "http://localhost:3000/",
             sub: "AItOawmwtWwcT0k51BayewNvutrJUqsvl6qs7A4",
-            aud: "client-id-123",
+            aud: "cid-xyz01234",
             exp: 1558882862061,
             iat: Number(new Date()),
             auth_time: Number(new Date())

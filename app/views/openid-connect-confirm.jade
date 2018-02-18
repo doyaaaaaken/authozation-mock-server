@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    span(style="background-color: #edefa6") [Authorization Server Page]
+    h1= "OpenID Connect Authorization Confirmation"
+    p [Account Name: doyaaaaaaken]
+    p Is it OK to authorize below permissions?
+    ul
+        li profile
+        li email
+
+    div
+        input(
+        type="button",
+        value="OK",
+        onClick="location.href='/auth-server/openid-connect/authorize?response_type=#{responseType}&client_id=cid-xyz01234&scope=openid%20profile%20email&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fclient-app%2Fopenid-connect%2Fcallback%2F#{redirectUriPath}'"
+        )
+        input(
+        type="button",
+        value="Deny",
+        onClick="location.href='/client-app/openid-connect/'"
+        )
+    hr
+    div
+        a(href="/client-app/oauth2/") Back
