@@ -71,9 +71,9 @@ const responseByAuthorizeEndpoint = (res, scope, responseType, clientId, redirec
                 res.status(302).header('Location', new AuthorizationApiErrorResopnse('login_required', 'Bad request: \'prompt\' parameter is \'none\', and user is not authenticated.', state).toUriWithFragment(redirectUri)).send();
             } else {
                 const grantCode = uuid4();
-                const accessTokenQuery = responseType.contains("token") ? `&access_token=${uuid4()}`: '';
-                const tokenTypeQuery = responseType.contains("token") ? '&token_type=Bearer': '';
-                const idTokenQuery = responseType.contains("id_token") ? `&id_token=${JWTFactory.createToken()}` : '';
+                const accessTokenQuery = responseType.includes("token") ? `&access_token=${uuid4()}`: '';
+                const tokenTypeQuery = responseType.includes("token") ? '&token_type=Bearer': '';
+                const idTokenQuery = responseType.includes("id_token") ? `&id_token=${JWTFactory.createToken()}` : '';
                 const stateQuery = (state) ? `&state=${state}` : '';
                 const expiresInQuery = '&expires_in=3600';
                 res.status(302).header('Location', `${redirectUri}#code=${grantCode}${accessTokenQuery}${tokenTypeQuery}${idTokenQuery}${stateQuery}${expiresInQuery}`).send();
